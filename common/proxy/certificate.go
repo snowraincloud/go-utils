@@ -156,7 +156,7 @@ func OutputDefaultCertAndPrivKey(path string) error {
 	return nil
 }
 
-func GenerateCertFile() error {
+func GenerateCertBlock() (*pem.Block, *pem.Block, error) {
 
 	template := &x509.Certificate{
 		SerialNumber: big.NewInt(1),
@@ -178,22 +178,18 @@ func GenerateCertFile() error {
 	// pub, priv, err := ed25519.GenerateKey(rand.Reader)
 	priv, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
-		return pkgerr.Wrap(err, "Generate private key failure")
+		return nil, nil, pkgerr.Wrap(err, "Generate private key failure")
 	}
 	// create certificate
 	derBytes, err := x509.CreateCertificate(rand.Reader, template, template, &priv.PublicKey, priv)
 	if err != nil {
-		return pkgerr.Wrap(err, "Create certificate failure")
+		return nil, nil, pkgerr.Wrap(err, "Create certificate failure")
 	}
-	// save certificate
-	err = save(&pem.Block{Type: "CERTIFICATE", Bytes: derBytes}, "./out/ca.crt")
-	if err != nil {
-		return pkgerr.Wrap(err, "Save certificate file failure")
-	}
+	certBlock := &pem.Block{Type: "CERTIFICATE", Bytes: derBytes}
 	// convert to byte
 	keyBytes, err := x509.MarshalPKCS8PrivateKey(priv)
 	if err != nil {
-		return pkgerr.Wrap(err, "Marshal private key failure")
+		return nil, nil, pkgerr.Wrap(err, "Marshal private key failure")
 	}
 	// save private key
 	keyBlock := &pem.Block{
@@ -201,11 +197,7 @@ func GenerateCertFile() error {
 		Type:  "EC PRIVATE KEY",
 		Bytes: keyBytes,
 	}
-	err = save(keyBlock, "./out/ca.key")
-	if err != nil {
-		return pkgerr.Wrap(err, "Save private key file failure")
-	}
-	return nil
+	return certBlock, keyBlock, nil
 }
 
 func (c *DefaultCertManagement) GetCert(host string) (*tls.Certificate, error) {

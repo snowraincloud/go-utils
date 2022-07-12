@@ -20,6 +20,12 @@ import (
 	"github.com/viki-org/dnscache"
 )
 
+const ForwardRuleExample = `forwardRules:
+- name: example
+  matchPath: example.com/app
+  targetPath: http://localhost/app
+`
+
 type IRule interface {
 	Match(*http.Request) (bool, error)
 	Handle(http.ResponseWriter, *http.Request) error
@@ -42,14 +48,8 @@ type ForwardRule struct {
 }
 
 func OutPutRuleExample(path string) error {
-	path += "/rule-sample.yml"
 
-	rules := `forwardRules:
-  - name: example
-    matchPath: example.com/app
-    targetPath: http://localhost/app
-`
-	return common.Save([]byte(rules), path)
+	return common.Save([]byte(ForwardRuleExample), path)
 }
 
 func NewForwardRuleFromConf(certManagement ICertManagement, fileName string) (*ForwardRule, error) {
