@@ -41,8 +41,8 @@ type ForwardRule struct {
 	transport      *http.Transport
 }
 
-func OutPutRuleExample() error {
-	path := "./out/rule-sample.yml"
+func OutPutRuleExample(path string) error {
+	path += "/rule-sample.yml"
 
 	rules := `forwardRules:
   - name: example
