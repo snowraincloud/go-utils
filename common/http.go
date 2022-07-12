@@ -15,7 +15,7 @@ func Hijack(rw http.ResponseWriter) (net.Conn, error) {
 	}
 	conn, _, err := hijacker.Hijack()
 	if err != nil {
-		return nil, pkgerr.Wrap(err, "Failed to get tcp connect")
+		return nil, pkgerr.Wrap(err, "Failed to hijack http connect")
 	}
 	return conn, nil
 }
