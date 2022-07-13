@@ -21,7 +21,8 @@ func SaveToUserHome(data []byte, name string) error {
 }
 
 func Save(data []byte, path string) error {
-	os.MkdirAll(path[:strings.LastIndex(path, "/")], 666)
+	path = strings.ReplaceAll(path, "/", "\\")
+	os.MkdirAll(path[:strings.LastIndex(path, "\\")], 666)
 
 	out, err := os.Create(path)
 	if err != nil {
@@ -32,7 +33,7 @@ func Save(data []byte, path string) error {
 	if err != nil {
 		return pkgerr.WithMessagef(err, "Save %s file failure", path)
 	}
-
+	defer out.Close()
 	return nil
 }
 

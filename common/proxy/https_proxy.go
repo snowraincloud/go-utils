@@ -45,6 +45,7 @@ func (p *DefaultHttpsProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request)
 		log.Infof("Http request hijack failure: %s", err)
 		return
 	}
+	defer conn.Close()
 
 	if !strings.HasSuffix(req.Host, ":443") {
 		req.Host += ":443"

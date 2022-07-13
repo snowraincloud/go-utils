@@ -31,7 +31,7 @@ type ICertManagement interface {
 }
 
 var (
-	defaultRootCaPem = []byte(`
+	DefaultRootCaPem = []byte(`
 -----BEGIN CERTIFICATE-----
 MIICBTCCAaqgAwIBAgIBATAKBggqhkjOPQQDAjBaMQ4wDAYDVQQGEwVDaGluYTEO
 MAwGA1UECBMFSHViZWkxDjAMBgNVBAcTBVd1aGFuMRAwDgYDVQQKEwdGb3J3YXJk
@@ -47,7 +47,7 @@ QRLFAIZvAiEAvEyNzS8TQsH/uHFBL8rKc4Aa0gzWfR+AdjeupJKpXNo=
 -----END CERTIFICATE-----
 `)
 
-	defaultRootKeyPem = []byte(`
+	DefaultRootKeyPem = []byte(`
 -----BEGIN EC PRIVATE KEY-----
 MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg7cPbPqTj7OtURNYe
 m74YVgMh4hqNeO6lXTeQIInKeAyhRANCAATxS07F5q8y1EhuPwfkNil47dpn7KBT
@@ -107,8 +107,8 @@ func NewDefaultCertManagementFromFile(ca, key string) (*DefaultCertManagement, e
 func NewDefaultCertManagement(modifyOpts ...Option) (*DefaultCertManagement, error) {
 	// default config
 	opts := options{
-		rootCa:  &defaultRootCaPem,
-		rootKey: &defaultRootKeyPem,
+		rootCa:  &DefaultRootCaPem,
+		rootKey: &DefaultRootKeyPem,
 	}
 	// load custom config
 	for _, modify := range modifyOpts {
@@ -141,13 +141,13 @@ func NewDefaultCertManagement(modifyOpts ...Option) (*DefaultCertManagement, err
 }
 
 func OutputDefaultCertAndPrivKey(path string) error {
-	ca, _ := pem.Decode(defaultRootCaPem)
+	ca, _ := pem.Decode(DefaultRootCaPem)
 	err := save(ca, path+"/defaultCa.crt")
 	if err != nil {
 		return pkgerr.Wrap(err, "Save default certificate file failure")
 	}
 
-	privKey, _ := pem.Decode(defaultRootKeyPem)
+	privKey, _ := pem.Decode(DefaultRootKeyPem)
 	err = save(privKey, path+"/defaultCa.key")
 	if err != nil {
 		return pkgerr.Wrap(err, "Save default private key file failure")
